@@ -1,0 +1,5 @@
+build
+.cache
+*.aux
+*.log
+*.toc
