@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 project(lab3)
 
-file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cc)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 
