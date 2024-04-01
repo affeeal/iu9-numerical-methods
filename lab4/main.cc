@@ -1,8 +1,8 @@
 // clang-format off
-#include <algorithm>
 #include <sprout/math/exp.hpp>
 // clang-format on
 
+#include <algorithm>
 #include <cassert>
 #include <cmath>
 #include <iomanip>
