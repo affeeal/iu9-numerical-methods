@@ -1,4 +1,5 @@
 // clang-format off
+#include <algorithm>
 #include <sprout/math/exp.hpp>
 // clang-format on
 
@@ -65,28 +66,46 @@ std::vector<double> RunThrough(const std::vector<std::vector<double>>& mat,
   return res;
 }
 
-void PrintGridFunc(const std::vector<double>& xs,
-                   const std::vector<double>& ys) {
-  static constexpr std::size_t kWidth = 9;
-
-  std::cout << "Grid function:\n\n";
-
-  std::cout << std::setw(kWidth) << "i" << std::setw(kWidth) << "x_i"
-            << std::setw(kWidth) << "y_i\n";
+void PrintResult(const std::vector<double>& xs, const std::vector<double>& ys,
+                 const std::vector<double>& errs,
+                 const std::function<double(const double)>& y) {
+  static constexpr std::size_t kWidth = 10;
 
   const auto n = xs.size();
-  assert(n == ys.size());
+  assert(ys.size() == n);
 
-  for (std::size_t i = 0; i < n; ++i) {
-    std::cout << std::setw(kWidth) << i << std::setw(kWidth) << xs[i]
-              << std::setw(kWidth) << ys[i] << "\n";
+  std::cout << std::setw(kWidth) << "i";
+  for (std::size_t i = 0; i < n; i++) {
+    std::cout << std::setw(kWidth) << i;
   }
-}
+  std::cout << "\n";
 
-void PrintError(const double err) {
-  std::cout << "Error:\n\n";
+  std::cout << std::setw(kWidth) << "x_i";
+  for (std::size_t i = 0; i < n; i++) {
+    std::cout << std::setw(kWidth) << std::fixed << xs[i];
+  }
+  std::cout << "\n";
 
-  std::cout << "max |y(x_i) - ys[i]| = " << err << '\n';
+  std::cout << std::setw(kWidth) << "y(x_i)";
+  for (std::size_t i = 0; i < n; i++) {
+    std::cout << std::setw(kWidth) << std::fixed << y(xs[i]);
+  }
+  std::cout << "\n";
+
+  std::cout << std::setw(kWidth) << "y_i";
+  for (std::size_t i = 0; i < n; i++) {
+    std::cout << std::setw(kWidth) << std::fixed << ys[i];
+  }
+  std::cout << "\n";
+
+  std::cout << std::setw(kWidth) << "error";
+  for (std::size_t i = 0; i < n; i++) {
+    std::cout << std::setw(kWidth) << std::fixed << errs[i];
+  }
+  std::cout << "\n";
+
+  const auto max_err = std::max_element(errs.begin(), errs.end());
+  std::cout << "max error = " << *max_err << "\n";
 }
 
 }  // namespace
@@ -164,17 +183,13 @@ int main() {
 
   ys.push_back(b);
 
-  PrintGridFunc(xs, ys);
-
   // Error
-  auto err = std::numeric_limits<double>::min();
+  std::vector<double> errs;
+  errs.reserve(n + 1);
 
-  for (std::size_t i = 0; i < n; ++i) {
-    const auto err_i = std::abs(y(xs[i]) - ys[i]);
-    if (err_i > err) {
-      err = err_i;
-    }
+  for (std::size_t i = 0; i <= n; ++i) {
+    errs.push_back(std::abs(y(xs[i]) - ys[i]));
   }
 
-  PrintError(err);
+  PrintResult(xs, ys, errs, y);
 }
