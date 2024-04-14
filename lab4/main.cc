@@ -6,8 +6,6 @@
 #include <cassert>
 #include <cmath>
 #include <iomanip>
-#include <limits>
-#include <numbers>
 #include <stdexcept>
 #include <vector>
 
@@ -25,7 +23,7 @@ bool CheckDiagonalPredominanceConditions(
     return false;
   }
 
-  for (auto i = 1; i < n; i++) {
+  for (std::size_t i = 1; i < n; i++) {
     if (std::abs(mat[i][i]) <
         std::abs(mat[i][i - 1]) + std::abs(mat[i][i + 1])) {
       return false;
@@ -49,7 +47,7 @@ std::vector<double> RunThrough(const std::vector<std::vector<double>>& mat,
   as[0] = -mat[0][1] / mat[0][0];
   bs[0] = cfs[0] / mat[0][0];
 
-  for (auto i = 1; i < n - 1; i++) {
+  for (std::size_t i = 1, end = n - 1; i < end; i++) {
     as[i] = -mat[i][i + 1] / (mat[i][i - 1] * as[i - 1] + mat[i][i]);
     bs[i] = (cfs[i] - mat[i][i - 1] * bs[i - 1]) /
             (mat[i][i - 1] * as[i - 1] + mat[i][i]);
