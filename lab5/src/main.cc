@@ -22,7 +22,7 @@ double D2fDxDy(const double x, const double y) { return 2; };
 }  // namespace
 
 int main() {
-  constexpr auto kEpsilon = 1e-8;
+  constexpr auto kEpsilon = 1e-3;
 
   auto x = 1.0;
   auto y = 1.0;
