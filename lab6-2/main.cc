@@ -21,7 +21,7 @@ class Method {
   virtual ~Method() = default;
 
   virtual Result FindRoot(const Segment segment, const double epsilon) = 0;
-  virtual std::string_view get_name() const = 0;
+  virtual std::string_view Name() const = 0;
 };
 
 class SplitMethod final : public Method {
@@ -47,7 +47,7 @@ class SplitMethod final : public Method {
     return {k, x};
   }
 
-  std::string_view get_name() const override { return kName; }
+  std::string_view Name() const override { return kName; }
 
  private:
   static constexpr std::string_view kName = "Dichotomy";
@@ -77,7 +77,7 @@ class NewtonMethod final : public Method {
     return {k, x_curr};
   }
 
-  std::string_view get_name() const override { return kName; }
+  std::string_view Name() const override { return kName; }
 
  private:
   static constexpr std::string_view kName = "Newton";
@@ -88,7 +88,7 @@ class NewtonMethod final : public Method {
 }  // namespace
 
 int main() {
-  constexpr std::size_t kColW = 18;
+  constexpr std::size_t kColW = 15;
 
   {
     std::cout << "Dichotomy and Newton nonlinear equation methods comparison.\n"
@@ -107,10 +107,6 @@ int main() {
     const auto segments =
         std::vector<Segment>{{-4.0, -3.5}, {-2.5, -2.0}, {1.0, 1.5}};
 
-    auto methods = std::vector<std::unique_ptr<Method>>{};
-    methods.push_back(std::make_unique<SplitMethod>(kF));
-    methods.push_back(std::make_unique<NewtonMethod>(kF, kDfDx, kD2fDx2));
-
     std::cout << std::setw(kColW) << "Method";
     for (auto&& [a, b] : segments) {
       std::ostringstream oss;
@@ -119,8 +115,12 @@ int main() {
     }
     std::cout << "\n";
 
+    auto methods = std::vector<std::unique_ptr<Method>>{};
+    methods.push_back(std::make_unique<SplitMethod>(kF));
+    methods.push_back(std::make_unique<NewtonMethod>(kF, kDfDx, kD2fDx2));
+
     for (auto&& method : methods) {
-      std::cout << std::setw(kColW) << method->get_name();
+      std::cout << std::setw(kColW) << method->Name();
       for (auto&& segment : segments) {
         const auto [k, x] = method->FindRoot(segment, kEpsilon);
         std::ostringstream oss;
@@ -176,10 +176,10 @@ int main() {
       ++k;
     } while (std::max(std::abs(x_c - x_p), std::abs(y_c - y_p)) >= kEpsilon);
 
-    std::cout << "Analytical solution: (" << kX0 << ", " << kY0 << ").\n";
-    std::cout << "Newton method's solution: (" << x_c << ", " << y_c << ").\n";
-    std::cout << "Iterations: " << k << ".\n";
-    std::cout << "Error: (" << std::abs(kX0 - x_c) << ", "
+    std::cout << "Analytical solution: (" << kX0 << ", " << kY0 << ").\n"
+              << "Newton method's solution: (" << x_c << ", " << y_c << ").\n"
+              << "Iterations: " << k << ".\n"
+              << "Error: (" << std::abs(kX0 - x_c) << ", "
               << std::abs(kY0 - y_c) << ").\n";
   }
 }
